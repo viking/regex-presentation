@@ -1,0 +1,300 @@
+\documentclass{beamer}
+\usepackage{minted}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{DejaVuSansMono}
+\usepackage{upquote}
+\usepackage{color}
+\usepackage{xpatch,letltxmacro}
+\LetLtxMacro{\cminted}{\minted}
+\let\endcminted\endminted
+\xpretocmd{\cminted}{\RecustomVerbatimEnvironment{Verbatim}{BVerbatim}{}}{}{}
+\definecolor{light-gray}{gray}{0.90}
+\begin{document}
+\title{Regular Expressions Primer}
+\author{Jeremy Stephens \\ Computer Systems Analyst \\ Department of Biostatistics}
+\date{December 18, 2015}
+\maketitle
+\begin{frame}
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=4in]{"email-regexp"}
+  \end{figure}
+\end{frame}
+\begin{frame}
+  \frametitle{What are they?}
+  Regular expressions are a way to describe patterns in text.
+\end{frame}
+\note{The regular expression shown in the previous slide is for matching valid e-mail addresses. Hopefully by the end of the talk, what this does will be more clear.}
+\begin{frame}[fragile]
+  \frametitle{Why use them?}
+  \begin{itemize}[<+->]
+    \item To find stuff
+      \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  haystack <- c("abcdef", "anbeceddelfe", "abcdef")
+  grep("n.e.e.d.l.e", haystack) #=> [1] 2
+\end{minted}
+
+      \vspace{3mm}
+
+    \item To remove cruft
+      \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  x <- c("123", "123 oz", "123 ounces")
+  sub("\\D+$", "", x) #=> [1] "123" "123" "123"
+\end{minted}
+
+      \vspace{3mm}
+
+    \item To extract data
+      \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  x <- "The Predators lost in overtime with 4:43 left on the clock."
+  gsub("^.+(\\d{1,2}:\\d{2}).+$", "\\1", x) #=> "4:43"
+\end{minted}
+
+      \vspace{3mm}
+
+  \end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\begin{figure}[htp]
+\centering
+\begin{cminted}[fontsize=\fontsize{0.12cm}{0.2cm}]{text}
+(?:(?:\r\n)?[ \t])*(?:(?:(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|"(?:[^\"\r\\]|\\.|(?:(?:\r\n)?[ \t]))*"(?:(?:
+\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|"(?:[^\"\r\\]|\\.|(?:(?:\r\n)?[ 
+\t]))*"(?:(?:\r\n)?[ \t])*))*@(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|\[([^\[\]\r\\]|\\.)*\
+](?:(?:\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|\[([^\[\]\r\\]|\\.)*\](?:
+(?:\r\n)?[ \t])*))*|(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|"(?:[^\"\r\\]|\\.|(?:(?:\r\n)?[ \t]))*"(?:(?:\r\n)
+?[ \t])*)*\<(?:(?:\r\n)?[ \t])*(?:@(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|\[([^\[\]\r\\]|\\.)*\](?:(?:\r\n)?[
+ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|\[([^\[\]\r\\]|\\.)*\](?:(?:\r\n)?[ \t]
+)*))*(?:,@(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|\[([^\[\]\r\\]|\\.)*\](?:(?:\r\n)?[ \t])*
+)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|\[([^\[\]\r\\]|\\.)*\](?:(?:\r\n)?[ \t])*))*)
+*:(?:(?:\r\n)?[ \t])*)?(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|"(?:[^\"\r\\]|\\.|(?:(?:\r\n)?[ \t]))*"(?:(?:\r
+\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|"(?:[^\"\r\\]|\\.|(?:(?:\r\n)?[ \t
+]))*"(?:(?:\r\n)?[ \t])*))*@(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|\[([^\[\]\r\\]|\\.)*\](
+?:(?:\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|\[([^\[\]\r\\]|\\.)*\](?:(?
+:\r\n)?[ \t])*))*\>(?:(?:\r\n)?[ \t])*)|(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|"(?:[^\"\r\\]|\\.|(?:(?:\r\n)?
+[ \t]))*"(?:(?:\r\n)?[ \t])*)*:(?:(?:\r\n)?[ \t])*(?:(?:(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|"(?:[^\"\r\\]|
+\\.|(?:(?:\r\n)?[ \t]))*"(?:(?:\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|"
+(?:[^\"\r\\]|\\.|(?:(?:\r\n)?[ \t]))*"(?:(?:\r\n)?[ \t])*))*@(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\
+".\[\]]))|\[([^\[\]\r\\]|\\.)*\](?:(?:\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[
+\]]))|\[([^\[\]\r\\]|\\.)*\](?:(?:\r\n)?[ \t])*))*|(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|"(?:[^\"\r\\]|\\.|(
+?:(?:\r\n)?[ \t]))*"(?:(?:\r\n)?[ \t])*)*\<(?:(?:\r\n)?[ \t])*(?:@(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|\[([
+^\[\]\r\\]|\\.)*\](?:(?:\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|\[([^\[\
+]\r\\]|\\.)*\](?:(?:\r\n)?[ \t])*))*(?:,@(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|\[([^\[\]\
+r\\]|\\.)*\](?:(?:\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|\[([^\[\]\r\\]
+|\\.)*\](?:(?:\r\n)?[ \t])*))*)*:(?:(?:\r\n)?[ \t])*)?(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|"(?:[^\"\r\\]|\\
+.|(?:(?:\r\n)?[ \t]))*"(?:(?:\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|"(?
+:[^\"\r\\]|\\.|(?:(?:\r\n)?[ \t]))*"(?:(?:\r\n)?[ \t])*))*@(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".
+\[\]]))|\[([^\[\]\r\\]|\\.)*\](?:(?:\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\]
+]))|\[([^\[\]\r\\]|\\.)*\](?:(?:\r\n)?[ \t])*))*\>(?:(?:\r\n)?[ \t])*)(?:,\s*(?:(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\
+".\[\]]))|"(?:[^\"\r\\]|\\.|(?:(?:\r\n)?[ \t]))*"(?:(?:\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[
+\["()<>@,;:\\".\[\]]))|"(?:[^\"\r\\]|\\.|(?:(?:\r\n)?[ \t]))*"(?:(?:\r\n)?[ \t])*))*@(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t
+])+|\Z|(?=[\["()<>@,;:\\".\[\]]))|\[([^\[\]\r\\]|\\.)*\](?:(?:\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|
+\Z|(?=[\["()<>@,;:\\".\[\]]))|\[([^\[\]\r\\]|\\.)*\](?:(?:\r\n)?[ \t])*))*|(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".\[\
+]]))|"(?:[^\"\r\\]|\\.|(?:(?:\r\n)?[ \t]))*"(?:(?:\r\n)?[ \t])*)*\<(?:(?:\r\n)?[ \t])*(?:@(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["
+()<>@,;:\\".\[\]]))|\[([^\[\]\r\\]|\\.)*\](?:(?:\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>
+@,;:\\".\[\]]))|\[([^\[\]\r\\]|\\.)*\](?:(?:\r\n)?[ \t])*))*(?:,@(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,
+;:\\".\[\]]))|\[([^\[\]\r\\]|\\.)*\](?:(?:\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\
+".\[\]]))|\[([^\[\]\r\\]|\\.)*\](?:(?:\r\n)?[ \t])*))*)*:(?:(?:\r\n)?[ \t])*)?(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\["()<>@,;:\\".
+\[\]]))|"(?:[^\"\r\\]|\\.|(?:(?:\r\n)?[ \t]))*"(?:(?:\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z|(?=[\[
+"()<>@,;:\\".\[\]]))|"(?:[^\"\r\\]|\\.|(?:(?:\r\n)?[ \t]))*"(?:(?:\r\n)?[ \t])*))*@(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])
++|\Z|(?=[\["()<>@,;:\\".\[\]]))|\[([^\[\]\r\\]|\\.)*\](?:(?:\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \000-\031]+(?:(?:(?:\r\n)?[ \t])+|\Z
+|(?=[\["()<>@,;:\\".\[\]]))|\[([^\[\]\r\\]|\\.)*\](?:(?:\r\n)?[ \t])*))*\>(?:(?:\r\n)?[ \t])*))*)?;\s*)
+\end{cminted}
+\end{figure}
+\end{frame}
+\begin{frame}
+  \vspace*{\fill}
+  \begin{center}
+  \begin{minipage}{.4\textwidth}
+  {\Huge\color{red} Don't Panic!}
+  \end{minipage}
+  \end{center}
+  \vfill % equivalent to \vspace{\fill}
+\end{frame}
+\begin{frame}
+  \frametitle{Things you (might) need to know}
+  There are 3 main regular expression standards:
+  \begin{itemize}
+    \item POSIX Basic Regular Expressions
+    \item POSIX Extended Regular Expressions (R uses this by default)
+    \item Perl-based Regular Expressions (R has support for this as well)
+  \end{itemize}
+\end{frame}
+\begin{frame}
+  \frametitle{Using regular expressions in R}
+  \begin{itemize}
+    \item grep('pattern', text, ...)
+    \item sub('pattern', replacement, text, ...)
+    \item regexpr('pattern', text, ...)
+  \end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Using regular expressions in other languages}
+  \begin{itemize}
+    \item Ruby:
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{ruby}
+  text =~ /pattern/
+\end{minted}
+    \item Javascript:
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{javascript}
+  text.match(/pattern/)
+\end{minted}
+    \item Python:
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{python}
+  re.match('pattern', text)
+\end{minted}
+  \end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{The simplest regular expression}
+  Plain text!
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("test", c("foo", "bar", "test")) #=> [1] 3
+\end{minted}
+  \vspace{10mm}
+  The pattern "test" is a perfectly valid regular expression.
+\end{frame}
+\begin{frame}
+  \frametitle{Metacharacters}
+  A "metacharacter" in a regular expression is a character with special meaning.
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Your first metacharacter: dot}
+  A "dot" (or period) means match any one character.
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("foo.bar", c("fooxbar", "foo bar", "foobar", "foo12bar")) #=> [1] 1 2
+\end{minted}
+  \vspace{10mm}
+  In the above example, "foo.bar" is the regular expression.
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Your first metacharacter: dot (cont.)}
+  Using multiple wildcards:
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("foo..bar",  c("fooxbar", "foo bar", "foobar", "foo12bar", "foo123bar")) #=> [1] 4
+  grep("foo...bar", c("fooxbar", "foo bar", "foobar", "foo12bar", "foo123bar")) #=> [1] 5
+\end{minted}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Variable-length matching: plus}
+  Use + to indicate \textbf{one or more}.
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("foo.+bar", c("fooxbar", "foo bar", "foobar", "foo12bar")) #=> [1] 1 2 4
+\end{minted}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Variable-length matching: plus (cont.)}
+  Using + works on normal characters too:
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("a+rgh", c("argh", "aaargh", "aaaaaaaargh", "ugh")) #=> [1] 1 2 3
+\end{minted}
+\end{frame}
+\begin{frame}
+  \frametitle{Quantifiers}
+  Quantifiers are metacharacters that describe "how many", like the + character.
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Matching zero or more: asterisk}
+  Use * to indicate \textbf{zero or more}.
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("foo.*bar", c("fooxbar", "foo bar", "foobar", "foo12bar")) #=> [1] 1 2 3 4
+\end{minted}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Matching zero or one: question mark}
+  Use ? to indicate \textbf{zero or one}.
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("abc?def", c("abdef", "abcdef", "abccdef")) #=> [1] 1 2
+\end{minted}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Matching \emph{n} times: curly braces}
+  Use \{\} to indicate \textbf{exactly \emph{n} times}.
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("10{6}", c("1000", "1000000")) => [1] 2
+\end{minted}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Matching \emph{n} times: curly braces (cont.)}
+  You can also use \{\} to indicate a range.
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("10{2,4}1", c("101", "1001", "10001", "100001", "1000001")) #=> [1] 2 3 4
+\end{minted}
+\end{frame}
+\begin{frame}
+  \frametitle{Intermission}
+  \includegraphics[width=4in]{"sleeping-corgi"}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Anchor down}
+  Consider the following:
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("10{3}", c("100", "1000", "10000")) #=> [1] 2 3
+\end{minted}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Anchoring to the end: dollar sign}
+  Use \$ to indicate \textbf{anchoring at the end}.
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("10{3}$", c("100", "1000", "10000")) #=> [1] 2
+\end{minted}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Anchoring to the beginning: caret}
+  Use \^{} to indicate \textbf{anchoring at the beginning}.
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("^10{3}", c("1000", "abc1000")) #=> [1] 1
+\end{minted}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Using both anchors}
+  You can use both \^{} and \$ to anchor at both ends.
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("10{3}",   c("abc1000", "1000", "10000")) #=> [1] 1 2 3
+  grep("10{3}$",  c("abc1000", "1000", "10000")) #=> [1] 1 2
+  grep("^10{3}$", c("abc1000", "1000", "10000")) #=> [1] 2
+\end{minted}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Matching groups of characters: brackets}
+  Use [] to indicate a \textbf{group of characters}, also known as a \textbf{character class}.
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("ab[cdef]", c("abc", "abd", "abe", "abf", "abg")) #=> [1] 1 2 3 4
+\end{minted}
+\end{frame}
+\end{document}
