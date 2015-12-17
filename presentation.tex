@@ -184,8 +184,8 @@ r\\]|\\.)*\](?:(?:\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \0
   \vspace{3mm}
 
 \begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
-  grep("foo..bar",  c("fooxbar", "foo bar", "foobar", "foo12bar", "foo123bar")) #=> [1] 4
-  grep("foo...bar", c("fooxbar", "foo bar", "foobar", "foo12bar", "foo123bar")) #=> [1] 5
+  grep("foo..bar",  c("foo12bar", "foo123bar")) #=> [1] 1
+  grep("foo...bar", c("foo12bar", "foo123bar")) #=> [1] 2
 \end{minted}
 \end{frame}
 \begin{frame}[fragile]
@@ -290,11 +290,112 @@ r\\]|\\.)*\](?:(?:\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \0
 \end{frame}
 \begin{frame}[fragile]
   \frametitle{Matching groups of characters: brackets}
-  Use [] to indicate a \textbf{group of characters}, also known as a \textbf{character class}.
+  Use [ ] to indicate a \textbf{group of characters}, also known as a \textbf{character class}.
   \vspace{3mm}
 
 \begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
   grep("ab[cdef]", c("abc", "abd", "abe", "abf", "abg")) #=> [1] 1 2 3 4
+\end{minted}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Matching groups of characters: brackets (cont.)}
+  You can also use [ ] with a range of characters.
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("ab[c-f]", c("abc", "abd", "abe", "abf", "abg")) #=> [1] 1 2 3 4
+\end{minted}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Matching groups of characters: brackets (cont.)}
+  Using [ ] with multiple ranges:
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("ab[c-fC-F]", c("abc", "abC", "abf", "abF", "abg")) #=> [1] 1 2 3 4
+\end{minted}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Matching groups of characters: brackets (cont.)}
+  Mix and match ranges and characters:
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("ab[c-fC-F123]", c("abc", "abF", "ab1", "ab2")) #=> [1] 1 2 3 4
+\end{minted}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Context in character classes}
+  Most metacharacters lose their meaning inside character classes:
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("[.+*]",  c(".", "+", "*", "x")) #=> [1] 1 2 3
+  grep("[a-c-]", c("a", "b", "c", "-")) #=> [1] 1 2 3 4
+\end{minted}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Using quantifiers with character classes}
+  It's possible to put quantifiers on character classes:
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("[a-z]+", c("123", "abcdef")) #=> [1] 2
+\end{minted}
+\end{frame}
+\begin{frame}
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=4in]{"email-regexp"}
+  \end{figure}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Negating a character class}
+  Use \^{} inside a character class to \textbf{negate it}.
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("[^a-z]+", c("123", "abcdef")) #=> [1] 1
+\end{minted}
+\end{frame}
+\begin{frame}
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=4in]{"email-regexp"}
+  \end{figure}
+\end{frame}
+\begin{frame}
+  \frametitle{Built-in character classes}
+  \begin{tabular}{|l|l|}
+    \hline \textbf{Shortcut} & \textbf{Expanded} \\
+    \hline \texttt{\textbackslash d} & \texttt{[0-9]} \\
+    \hline \texttt{\textbackslash w} & \texttt{[a-zA-Z0-9\_]} \\
+    \hline \texttt{\textbackslash s} & \texttt{[ \textbackslash t\textbackslash n\textbackslash r\textbackslash f]} \\
+    \hline \texttt{\textbackslash D} & \texttt{[\textasciicircum 0-9]} \\
+    \hline \texttt{\textbackslash W} & \texttt{[\textasciicircum a-zA-Z0-9\_]} \\
+    \hline \texttt{\textbackslash S} & \texttt{[\textasciicircum \ \textbackslash t\textbackslash n\textbackslash r\textbackslash f]} \\
+    \hline
+  \end{tabular}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{A note about backslashes in R}
+  To use built-in character classes in R, you need to \textbf{escape} the
+  backslashes.
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("\d",  c("123", "abcdef")) #=> Error!
+  grep("\\d", c("123", "abcdef")) #=> [1] 1
+\end{minted}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{A note about backslashes in R (cont.)}
+  To match a literal backslash in a regular expression in R...
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("\\\\",     c("123", "123\\"))   #=> [1] 2
+  grep("\\\\\\\\", c("123", "123\\\\")) #=> [1] 2
 \end{minted}
 \end{frame}
 \end{document}
