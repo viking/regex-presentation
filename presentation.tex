@@ -238,7 +238,7 @@ r\\]|\\.)*\](?:(?:\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \0
 \end{minted}
 \end{frame}
 \begin{frame}[fragile]
-  \frametitle{Matching \emph{n} times: curly braces (cont.)}
+  \frametitle{Matching \emph{n} to \emph{m} times: curly braces}
   You can also use \{\} to indicate a range.
   \vspace{3mm}
 
@@ -359,12 +359,6 @@ r\\]|\\.)*\](?:(?:\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \0
 \end{minted}
 \end{frame}
 \begin{frame}
-  \begin{figure}[h]
-    \centering
-    \includegraphics[width=4in]{"email-regexp"}
-  \end{figure}
-\end{frame}
-\begin{frame}
   \frametitle{Built-in character classes}
   \begin{tabular}{|l|l|}
     \hline \textbf{Shortcut} & \textbf{Expanded} \\
@@ -397,6 +391,53 @@ r\\]|\\.)*\](?:(?:\r\n)?[ \t])*)(?:\.(?:(?:\r\n)?[ \t])*(?:[^()<>@,;:\\".\[\] \0
   grep("\\\\",     c("123", "123\\"))   #=> [1] 2
   grep("\\\\\\\\", c("123", "123\\\\")) #=> [1] 2
 \end{minted}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Grouping}
+  Use ( ) to specify a \textbf{group} to be referenced later using \textbackslash [number].
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  sub("foo(.+)", "\\1", c("foobar", "foobaz")) #=> [1] bar baz
+\end{minted}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Advanced usage: negative lookahead}
+  Use ?! inside a group to indicate a \textbf{negative lookahead} match. This requires \texttt{perl=TRUE} in R functions.
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("foo(?!bar).+", c("foo123", "foobar", "foo123bar"), perl=TRUE) #=> [1] 1 3
+\end{minted}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Advanced usage: negative lookbehind}
+  Use ?<! inside a group to indicate a \textbf{negative lookbehind} match. This requires \texttt{perl=TRUE} in R functions.
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{r}
+  grep("(?<!foo)bar", c("bar", "foobar", "123bar"), perl=TRUE) #=> [1] 1 3
+\end{minted}
+\end{frame}
+\begin{frame}[fragile]
+  \frametitle{Regular expressions on the command line}
+  You can use regular expressions with the \texttt{grep} and \texttt{sed} commands in your terminal.
+  \vspace{3mm}
+
+\begin{minted}[bgcolor=light-gray,fontsize=\tiny]{bash}
+grep -E 'foo.+bar' *.txt
+egrep 'foo.+bar' *.txt
+sed 's/foo/bar/' *.txt
+\end{minted}
+\end{frame}
+\begin{frame}
+  \frametitle{References}
+  \begin{itemize}
+    \item http://www.regular-expressions.info/
+    \item \texttt{man perlre} from a terminal
+    \item \texttt{?sub} in R
+    \item RegularExpressionPrimer on the Biostatistics Wiki
+  \end{itemize}
 \end{frame}
 \begin{frame}
   \frametitle{The End}
